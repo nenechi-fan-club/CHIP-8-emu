@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 
 class chip8 {
@@ -11,7 +12,7 @@ private:
   void disassemble();
 
 private:
-  uint8_t *memory;
+  uint8_t* memory;
   uint16_t pc;
 
   const uint16_t op_start;

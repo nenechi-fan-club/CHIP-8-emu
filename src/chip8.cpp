@@ -1,9 +1,10 @@
-#include <iostream>
+#include <cstdio>
+#include <cstring>
 
-#include "chip8.hh"
+#include "chip8.h"
 
 //only loads instructions
-chip8::chip8(uint8_t *op, uint16_t fsize): op_start(0x200) {
+chip8::chip8(uint8_t* op, uint16_t fsize): op_start(0x200) {
   op_end = op_start + fsize;
   memory = new uint8_t[op_end];
   memcpy(memory + op_start, op, fsize * sizeof(uint8_t));
@@ -15,7 +16,7 @@ chip8::~chip8() {
 }
 
 void chip8::disassemble() {
-  uint8_t *opcode = &memory[pc];
+  uint8_t* opcode = &memory[pc];
   uint8_t first = opcode[0] >> 4;
   uint8_t last = opcode[1] & 0x0f;
 
@@ -23,7 +24,19 @@ void chip8::disassemble() {
 
   switch(first) {
     case 0x00:
-      //branching
+      switch(opcode[1]) {
+        case 0xe0:
+          printf("CLS"); 
+        break;
+        case 0xee:
+          printf("RET"); 
+        break;
+        default: {
+          uint16_t addr = ((opcode[0] & 0x0f) << 8) | opcode[1];
+          printf("%s %03x", "SYS", addr);
+        }
+        break;
+      }
     break;
     case 0x01: {
       uint16_t addr = ((opcode[0] & 0x0f) << 8) | opcode[1];
