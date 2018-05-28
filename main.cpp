@@ -1,23 +1,13 @@
 #include <fstream>
+#include <iostream>
 
 #include "src/chip8.h"
 
 int main(int argc, char** argv) {
-  
-  std::ifstream f(argv[1], std::ios::binary | std::ios::ate);
-  int fsize = f.tellg();
-  f.seekg(std::ios_base::beg);
-
-  uint8_t* op = new uint8_t[fsize];
-  f.read(reinterpret_cast<char *>(op), fsize);
-  for (uint16_t i = 0; i < fsize; i++) {
-    printf("%02x ", op[i]);
-  }
-
-  chip8 emulator(op, fsize);
+  chip8 emulator;
+  emulator.load_rom(argv[1]);
+  emulator.dump_memory();
+  printf("\n==================\n\n");
   emulator.run_disassembler();
-
-  delete []op;
-
   return 0;
 }
