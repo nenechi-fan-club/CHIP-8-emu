@@ -2,4 +2,17 @@
 *.o
 
 #binaries
+<<<<<<< HEAD
 *.exe
+=======
+*.exe
+
+#roms
+roms/*
+
+#build folder
+build/*
+
+#ignore batch build script
+build.bat
+>>>>>>> cea1ce3d533ada5063d5efb31cd8a4a5a6592c85
