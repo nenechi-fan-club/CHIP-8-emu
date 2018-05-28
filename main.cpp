@@ -14,6 +14,10 @@ int main(int argc, char** argv) {
     printf("%02x ", op[i]);
   }
 
+  //print newlines to seperate dissasembly from mixing with the raw hexdump
+  printf("\n\n /*************************************/ \n\n");
+  
+  
   chip8 emulator(op, fsize);
   emulator.run_disassembler();
 

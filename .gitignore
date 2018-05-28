@@ -6,3 +6,9 @@
 
 #roms
 roms/*
+
+#build folder
+build/*
+
+#ignore batch build script
+build.bat
