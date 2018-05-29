@@ -28,8 +28,14 @@ const uint8_t FONT_SPRITES[FONT_COUNT][SPRITE_SIZE] = {
 //offset must satisfy: offset + 80 < 512
 const uint16_t FONT_OFFSET = 0;
 
-const int WINDOW_WIDTH = 500;
-const int WINDOW_HEIGHT = 500;
+const int CHIP8_WIDTH = 64;
+const int CHIP8_HEIGHT = 32;
+
+//TODO(keo): move to graphics class
+const int SCALE_FACTOR = 20;
+
+const int WINDOW_WIDTH = CHIP8_WIDTH * SCALE_FACTOR;
+const int WINDOW_HEIGHT = CHIP8_HEIGHT * SCALE_FACTOR;
 
 class graphics {
 //constructors

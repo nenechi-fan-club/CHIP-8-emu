@@ -50,6 +50,7 @@ void chip8::run() {
   
   while (running) {
     update();
+    if (!running) break; //temp fix until run logic is fixed
     running = cpu.cycle(memory, pixel_buffer);
     if(g.update_texture(pixel_buffer) != 0) {
       printf("Failed to update texture: %s", SDL_GetError());

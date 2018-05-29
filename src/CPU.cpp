@@ -1,5 +1,7 @@
 #include "CPU.h"
 
+#include <cstdio>
+
 #ifdef __GNUG__
 #include <cstdlib>
 #include <ctime>
@@ -42,7 +44,7 @@ bool CPU::cycle(uint8_t* memory, uint32_t *pixel_buffer) {
   uint16_t addr = ((opcode[0] & 0x0f) << 8) | opcode[1];
 
   pc += 2;
-
+  
   switch(first) {
     case 0x00:
       switch(opcode[1]) {
@@ -138,25 +140,33 @@ bool CPU::cycle(uint8_t* memory, uint32_t *pixel_buffer) {
       uint8_t *sprite = (memory + i);
       for (int j = 0; j < 8; j++) {
         int abs_x = reg[x] + j;
-        if (abs_x > WINDOW_WIDTH) abs_x = j;
+        if (abs_x > CHIP8_WIDTH) abs_x = j;
+        abs_x *= SCALE_FACTOR;
         for (int k = 0; k < n; k++) {
           int abs_y = reg[y] + k;
-          if (abs_y > WINDOW_HEIGHT) abs_y = k;
+          if (abs_y > CHIP8_HEIGHT) abs_y = k;
+          abs_y *= SCALE_FACTOR;
           uint32_t *set = &pixel_buffer[abs_x + abs_y*WINDOW_WIDTH];
           uint32_t pixel = (uint32_t)((sprite[k] & (0x80 >> j)) >> (7-j));
           if (pixel) {
             pixel |= 0xffffff;
-            if (*set) reg[0x0f] = 1;
+            reg[0x0f] = uint8_t(*set);
           }
-          *set ^= pixel;
+          for (int l = 0; l < SCALE_FACTOR; l++) {
+            for (int m = 0; m < SCALE_FACTOR; m++) {
+              *(set + l + m*WINDOW_WIDTH) ^= pixel; 
+            }
+          }
         }
       }
     } break;
     case 0x0e: 
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
+        printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
         break;
         case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
+        printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
         break;
       }
     break;
@@ -166,6 +176,8 @@ bool CPU::cycle(uint8_t* memory, uint32_t *pixel_buffer) {
           reg[x] = dt;
         break;
         case 0x0a: //Fx0A: Wait for a key press, store the value of the key in Vx.
+        printf("Warning at %03x: Unimplemented instruction Fx0A\n", pc);
+        pc -= 2;
         break;
         case 0x15: //Fx15: Set delay timer = Vx
           dt = reg[x];
@@ -181,8 +193,8 @@ bool CPU::cycle(uint8_t* memory, uint32_t *pixel_buffer) {
         break;
         case 0x33: { //Fx33: Store BCD representation of Vx in memory locations I, I+1, and I+2
           uint8_t t = reg[x];
-          for (uint8_t j = 2; j >= 0; j--) {
-            memory[i + j] = t % 10;
+          for (uint8_t j = 3; j != 0; j--) {
+            memory[i + j - 1] = t % 10;
             t /= 10;
           }
         } break;
