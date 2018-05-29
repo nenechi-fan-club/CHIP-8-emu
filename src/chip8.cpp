@@ -6,6 +6,8 @@
 #include <string>
 #include <random>
 
+#include <SDL.h>
+
 #include "chip8.h"
 
 //#include <SDL.h>
@@ -28,22 +30,50 @@ void chip8::load_rom(std::string rom) {
   ifs.read(reinterpret_cast<char *>(memory + ADDR_START), len);
 }
 
+
+/*
+  TODO(Sweets): Delet this!
 void chip8::cpu_cycle() {
   cpu.cycle(memory);
 }
+*/
 
 
 void chip8::run() {
-  update();
-  render();
-
-  //SDL_Delay(1/60);
+  while (running) {
+    update();
+    render();  
+    SDL_Delay(2000);
+    running = false;
+  }
 }
 
 
 
 void chip8::update() {
-  cpu.cycle(memory);
+
+  SDL_Event e;
+
+  while( SDL_PollEvent(&e) != 0 ) {
+    switch(e.type) {
+
+    case SDL_QUIT:
+      running = false;
+      break;
+      
+    case SDL_KEYDOWN:
+      printf("test works!\n");
+      
+      break;
+
+    case SDL_KEYUP:
+      
+      break;
+        
+    }
+
+  }
+    cpu.cycle(memory);
 }
 
 

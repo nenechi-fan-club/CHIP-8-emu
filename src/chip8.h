@@ -5,6 +5,8 @@
 #include "CPU.h"
 
 
+const uint8_t KEY_COUNT = 16;
+
 class chip8 {
 //constructors
 public:
@@ -17,12 +19,12 @@ public:
   void load_rom(std::string rom);
   void run_disassembler();
 
-  void cpu_cycle();
+  //void cpu_cycle();
 
   void run();
   
 private:
-  
+
   void disassemble();
 
   void update();
@@ -31,11 +33,14 @@ private:
 
 //members
 private:
-
   CPU cpu;
+
+  bool running = true;
+  
+  bool keystates[KEY_COUNT];
   
   uint8_t* memory;
   uint16_t pc;
   uint16_t len;
-
+  
 };
