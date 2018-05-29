@@ -3,14 +3,11 @@
 
 
 CPU::CPU() {
-  memory = new uint8_t[ADDR_END];
   pc = ADDR_START;
   sp = &stack[0];
 }
 
 CPU::~CPU() {
-  delete[] memory;
-  memory = nullptr;
   sp = nullptr;
 }
 

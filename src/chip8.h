@@ -18,10 +18,16 @@ public:
   void run_disassembler();
 
   void cpu_cycle();
+
+  void run();
   
 private:
   
   void disassemble();
+
+  void update();
+  void render();
+  
 
 //members
 private:

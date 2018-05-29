@@ -13,7 +13,6 @@ class CPU {
 
  private:
 
-  uint8_t* memory;
   uint16_t* sp;                 //Stack pointer
   uint16_t pc;                 //Program counter
   uint16_t stack[STACK_SIZE]; 

@@ -8,6 +8,8 @@
 
 #include "chip8.h"
 
+//#include <SDL.h>
+
 //load from 0 to 0x200 here
 chip8::chip8() {
   memory = new uint8_t[ADDR_END];
@@ -29,6 +31,28 @@ void chip8::load_rom(std::string rom) {
 void chip8::cpu_cycle() {
   cpu.cycle(memory);
 }
+
+
+void chip8::run() {
+  update();
+  render();
+
+  //SDL_Delay(1/60);
+}
+
+
+
+void chip8::update() {
+  cpu.cycle(memory);
+}
+
+
+
+
+void chip8::render() {
+  //for when we get around to graphics
+}
+
 
 //nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
 //n - A 4-bit value, the lowest 4 bits of the instruction
