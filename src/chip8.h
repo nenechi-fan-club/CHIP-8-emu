@@ -2,38 +2,44 @@
 
 #include <cstdint>
 #include <string>
+
+#include <SDL.h>
+
 #include "CPU.h"
-
-
-
+#include "graphics.h"
 
 class chip8 {
-//constructors
+//Constructors
 public:
   chip8();
   ~chip8();
 
-//methods
+//Methods
 public:
-  void dump_memory(uint16_t offset = ADDR_START);
-  void load_rom(std::string rom);
-  void run_disassembler();
+  bool load_rom(std::string rom);
 
   //void cpu_cycle();
 
   void run();
   
+  void debug(uint16_t offset = ADDR_START);
+
 private:
-
+  //Debug
+  void dump_memory(uint16_t offset);
   void disassemble();
+  void run_disassembler();
 
+  //SDL
+  bool init();
   void update();
   void render();
-  
+  void clean();
 
-//members
+//Members
 private:
   CPU cpu;
+  graphics g;
 
   bool running = true;
   
@@ -41,4 +47,6 @@ private:
   uint16_t pc;
   uint16_t len;
   
+  //GPU memory buffer
+  uint32_t *pixel_buffer;
 };

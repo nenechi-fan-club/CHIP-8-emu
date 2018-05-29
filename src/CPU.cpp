@@ -1,16 +1,26 @@
 #include "CPU.h"
-#include <stdio.h>
 
+#ifdef __GNUG__
+#include <cstdlib>
+#include <ctime>
+#endif
 
 CPU::CPU() {
   pc = ADDR_START;
   sp = &stack[0];
+
+  //ideally you want to use random device for random number generation because it's non-deterministic but it's not supported by g++
+  #ifndef __GNUG__
+  std::random_device r 
+  eng = std::mt19937(r());
+  #else
+  srand(time(0));
+  #endif
 }
 
 CPU::~CPU() {
   sp = nullptr;
 }
-
 
 //nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
 //n - A 4-bit value, the lowest 4 bits of the instruction
@@ -19,7 +29,11 @@ CPU::~CPU() {
 //kk - An 8-bit value, the lowest 8 bits of the instructiona
 
 
-void CPU::cycle(uint8_t* memory) {
+//TODO: Ex9E, ExA1, Fx0A
+bool CPU::cycle(uint8_t* memory, uint32_t *pixel_buffer) {
+  //if (pc == EOF) return false;
+  if (pc >= ADDR_END) return false;
+
   uint8_t* opcode = &memory[pc];
   uint8_t first = opcode[0] >> 4;
   uint8_t n = opcode[1] & 0x0f;
@@ -32,18 +46,21 @@ void CPU::cycle(uint8_t* memory) {
   switch(first) {
     case 0x00:
       switch(opcode[1]) {
-        case 0xe0:
-          //clear display
+        case 0xe0: //00E0: Clear the display
+          memset(pixel_buffer, 0, WINDOW_WIDTH * WINDOW_HEIGHT * sizeof(uint32_t));
         break;
-        case 0xee: 
+        case 0xee: //00EE: Return from a subroutine
           pc = *sp;
           sp--;
         break;
-        default: break;
+        default: //0nnn: Jump to a machine code routine at nnn; can be ignored!
+        break;
       }
     break;
-    case 0x01: pc = addr; break;
-    case 0x02:
+    case 0x01: //1nnn: Jump to location nnn
+      pc = addr; 
+    break;
+    case 0x02: //2nnn: Call subroutine at nnn
       sp++;
       *sp = pc;
       pc = addr;
@@ -110,12 +127,30 @@ void CPU::cycle(uint8_t* memory) {
       pc = addr + (uint16_t)reg[0];
     break;
     case 0x0c: { //Cxkk: Set Vx = random byte & kk
-      //std::random_device rd;
-      //std::mt19937 gen(rd());
-      //std::uniform_int_distribution<int> dist(0, 255);
-      //reg[x] = dist(gen) & opcode[1];
+      #ifndef __GNUG__
+      std::uniform_int_distribution<int> dist(0, 255);
+      reg[x] = dist(eng) & opcode[1];
+      #else
+      reg[x] = rand() % 256 & opcode[1];
+      #endif
     } break;
     case 0x0d: { //Dxyn: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
+      uint8_t *sprite = (memory + i);
+      for (int j = 0; j < 8; j++) {
+        int abs_x = reg[x] + j;
+        if (abs_x > WINDOW_WIDTH) abs_x = j;
+        for (int k = 0; k < n; k++) {
+          int abs_y = reg[y] + k;
+          if (abs_y > WINDOW_HEIGHT) abs_y = k;
+          uint32_t *set = &pixel_buffer[abs_x + abs_y*WINDOW_WIDTH];
+          uint32_t pixel = (uint32_t)((sprite[k] & (0x80 >> j)) >> (7-j));
+          if (pixel) {
+            pixel |= 0xffffff;
+            if (*set) reg[0x0f] = 1;
+          }
+          *set ^= pixel;
+        }
+      }
     } break;
     case 0x0e: 
       switch(opcode[1]) {
@@ -130,10 +165,8 @@ void CPU::cycle(uint8_t* memory) {
         case 0x07: //Fx07: Set Vx = delay timer value
           reg[x] = dt;
         break;
-        case 0x0a: {
-          //capture key
-          //reg[x] = key
-        } break;
+        case 0x0a: //Fx0A: Wait for a key press, store the value of the key in Vx.
+        break;
         case 0x15: //Fx15: Set delay timer = Vx
           dt = reg[x];
         break;
@@ -144,6 +177,7 @@ void CPU::cycle(uint8_t* memory) {
           i += reg[x];
         break;
         case 0x29: //Fx29: Set I = location of sprite for digit Vx
+          i = FONT_OFFSET + reg[x]*SPRITE_SIZE;
         break;
         case 0x33: { //Fx33: Store BCD representation of Vx in memory locations I, I+1, and I+2
           uint8_t t = reg[x];
@@ -165,4 +199,6 @@ void CPU::cycle(uint8_t* memory) {
       }
     break;
   }
+
+  return true;
 }

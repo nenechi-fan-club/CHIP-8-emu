@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-const uint8_t KEY_COUNT = 16;
+//const uint8_t KEY_COUNT = 16;
 
 /*
   -Virtual key map-
@@ -21,22 +21,23 @@ const uint8_t KEY_COUNT = 16;
 */
 
 enum v_keys {
-  one = 0,
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-  zero,
-  a,
-  b,
-  c,
-  d,
-  e,
-  f  
+  ONE = 0,
+  TWO,
+  THREE,
+  FOUR,
+  FIVE,
+  SIX,
+  SEVEN,
+  EIGHT,
+  NINE,
+  ZERO,
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  KEY_COUNT  
 };
 
 class input {
@@ -51,7 +52,7 @@ class input {
   void keydown_event(SDL_Event& e);
   void keyup_event(SDL_Event& e);
 
-  bool is_keydown();
-  bool is_keyup();
+  bool is_keydown(v_keys key);
+  bool is_keyup(v_keys key);
   
 };

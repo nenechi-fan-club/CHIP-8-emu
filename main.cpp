@@ -1,31 +1,23 @@
 #include <fstream>
-#include <iostream>
+#include <cstdio>
 
 #include <SDL.h>
 
 #include "src/chip8.h"
 
 int main(int argc, char** argv) {
-
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-    printf( "Error initializing SDL; Error: %s\n", SDL_GetError() );
+  chip8 emulator;
+  if(!emulator.load_rom(argv[1])) {
+    printf("Failed to load ROM: file not found\n");
     return 0;
   }
 
-  SDL_Window* gWindow = SDL_CreateWindow( "CHIP-8", 200, 200, 128, 64, SDL_WINDOW_SHOWN );
-  
-  chip8 emulator;
-  emulator.load_rom(argv[1]);
-  emulator.dump_memory();
-  printf("\n==================\n\n");
-  emulator.run_disassembler();
+  if(strcmp(argv[2], "-d") == 0) {
+    emulator.debug(0);
+  } else {
+    //emulator.run();
+  }
 
-  emulator.run();
-
-  SDL_DestroyWindow(gWindow);
-  gWindow = nullptr;
-  
-  SDL_Quit();
   
   return 0;
 }

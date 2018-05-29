@@ -1,96 +1,86 @@
+#include "chip8.h"
+
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-
 #include <fstream>
-#include <string>
-#include <random>
 
-#include <SDL.h>
-
-#include "chip8.h"
-
-//#include <SDL.h>
-
-//load from 0 to 0x200 here
+//interpretator data is loaded here and must be located from 0x000 to 0x200
 chip8::chip8() {
   memory = new uint8_t[ADDR_END];
+
+  //load font sprites
+  for (int i = 0; i < FONT_COUNT; i++) {
+    for (int j = 0; j < SPRITE_SIZE; j++) {
+      memory[FONT_OFFSET + i*SPRITE_SIZE + j] = FONT_SPRITES[i][j];
+    }
+  }
+
   pc = ADDR_START;
+  
+  pixel_buffer = new uint32_t[WINDOW_WIDTH * WINDOW_HEIGHT];
 }
 
 chip8::~chip8() {
   delete[] memory;
   memory = nullptr;
+
+  delete[] pixel_buffer;
+
+  clean();
 }
 
-void chip8::load_rom(std::string rom) {
+bool chip8::load_rom(std::string rom) {
   std::ifstream ifs(rom, std::ios::binary | std::ios::ate);
+  if (!ifs.is_open()) return false;
+  
   len = ifs.tellg();
   ifs.seekg(std::ios_base::beg);
   ifs.read(reinterpret_cast<char *>(memory + ADDR_START), len);
+  return true;
 }
 
-
-/*
-  TODO(Sweets): Delet this!
-void chip8::cpu_cycle() {
-  cpu.cycle(memory);
-}
-*/
-
+//TODO(Sweets): Delet this!
+//void chip8::cpu_cycle() {
+//  cpu.cycle(memory);
+//}
 
 void chip8::run() {
+  if (!init()) running = false;
+  
   while (running) {
     update();
+    running = cpu.cycle(memory, pixel_buffer);
+    if(g.update_texture(pixel_buffer) != 0) {
+      printf("Failed to update texture: %s", SDL_GetError());
+    }
     render();  
     SDL_Delay(1/60);
-    
   }
 }
 
+void chip8::debug(uint16_t offset) {
+  dump_memory(offset);
+  printf("\n==================\n\n");
+  run_disassembler();
+}
 
-
-void chip8::update() {
-
-  SDL_Event e;
-
-  while( SDL_PollEvent(&e) != 0 ) {
-    switch(e.type) {
-
-    case SDL_QUIT:
-      running = false;
-      break;
-      
-    case SDL_KEYDOWN:
-      printf("test works!\n");
-      
-      break;
-
-    case SDL_KEYUP:
-      
-      break;
-        
+void chip8::dump_memory(uint16_t offset) {
+  uint16_t end = std::min<int16_t>(ADDR_END, ADDR_START + len);
+  for (uint16_t j = offset; j < end; j += 0x10) {
+    printf("%03x  ", j);
+    for (uint16_t k = 0; k < 0x10 && k + j < end; k++) {
+      printf("%02x ", memory[k + j]);
     }
-
+    printf("\n");
   }
-  //cpu.cycle(memory);
 }
-
-
-
-
-void chip8::render() {
-  //for when we get around to graphics
-  
-}
-
 
 //nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
 //n - A 4-bit value, the lowest 4 bits of the instruction
 //x - A 4-bit value, the lower 4 bits of the high byte of the instruction
 //y - A 4-bit value, the upper 4 bits of the low byte of the instruction
 //kk - An 8-bit value, the lowest 8 bits of the instructiona
-
 void chip8::disassemble() {
   uint8_t* opcode = &memory[pc];
   uint8_t first = opcode[0] >> 4;
@@ -156,17 +146,6 @@ void chip8::disassemble() {
   }
 }
 
-void chip8::dump_memory(uint16_t offset) {
-  uint16_t end = std::min<int16_t>(ADDR_END, offset + len);
-  for (uint16_t j = offset; j < end; j += 0x10) {
-    printf("%03x  ", j);
-    for (uint16_t k = 0; k < 0x10 && k + j < end; k++) {
-      printf("%02x ", memory[k + j]);
-    }
-    printf("\n");
-  }
-}
-
 void chip8::run_disassembler() {
   pc = ADDR_START;
   while (pc < ADDR_START + len) {
@@ -174,4 +153,47 @@ void chip8::run_disassembler() {
     pc += 2;
     printf("\n");
   }
+}
+
+
+bool chip8::init() {
+  if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    printf("Failed to initialize SDL: %s", SDL_GetError());
+    return false;
+  }
+  return g.init();
+}
+
+void chip8::update() {
+
+  SDL_Event e;
+
+  while( SDL_PollEvent(&e) != 0 ) {
+    switch(e.type) {
+
+    case SDL_QUIT:
+      running = false;
+      break;
+      
+    case SDL_KEYDOWN:
+      printf("test works!\n");
+      
+      break;
+
+    case SDL_KEYUP:
+      
+      break;
+        
+    }
+
+  }
+  //cpu.cycle(memory);
+}
+
+void chip8::render() {
+  g.render();
+}
+
+void chip8::clean() {
+  SDL_Quit();
 }
