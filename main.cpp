@@ -12,10 +12,10 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  if(strcmp(argv[2], "-d") == 0) {
+  if(argc > 2 && strcmp(argv[2], "-d") == 0) {
     emulator.debug(0);
   } else {
-    //emulator.run();
+    emulator.run();
   }
 
   
