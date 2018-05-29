@@ -5,7 +5,7 @@
 #include "CPU.h"
 
 
-const uint8_t KEY_COUNT = 16;
+
 
 class chip8 {
 //constructors
@@ -36,8 +36,6 @@ private:
   CPU cpu;
 
   bool running = true;
-  
-  bool keystates[KEY_COUNT];
   
   uint8_t* memory;
   uint16_t pc;

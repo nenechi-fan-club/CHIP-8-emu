@@ -43,8 +43,8 @@ void chip8::run() {
   while (running) {
     update();
     render();  
-    SDL_Delay(2000);
-    running = false;
+    SDL_Delay(1/60);
+    
   }
 }
 
@@ -73,7 +73,7 @@ void chip8::update() {
     }
 
   }
-    cpu.cycle(memory);
+  //cpu.cycle(memory);
 }
 
 
@@ -81,6 +81,7 @@ void chip8::update() {
 
 void chip8::render() {
   //for when we get around to graphics
+  
 }
 
 
