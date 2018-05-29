@@ -1,17 +1,22 @@
-CC = g++
-CFLAGS = -g
+OBJS = main.cpp $(wildcard src/*.cpp)
 
-SRC_DIR = src
-BUILD_DIR = build
+OBJ_NAME = bin/chip8
 
-TARGET = bin/chip8.exe
+INCLUDE_PATHS = -I.\src
 
-$(TARGET): $(BUILD_DIR)/chip8.o $(BUILD_DIR)/main.o
-	@echo "Linking..."
-	$(CC) $^ -o $@
+LIBRARY_PATHS = 
 
-$(BUILD_DIR)/chip8.o: $(SRC_DIR)/chip8.cpp
-	$(CC) $(CFLAGS) -c -o $@ $^
+COMPILER_FLAGS = -w 
+#These flags are left out for debug builds
+#-Wl,-subsystem,windows
 
-$(BUILD_DIR)/main.o: main.cpp
-	$(CC) $(CFLAGS) -c -o $@ $^
+LINKER_FLAGS = -lmingw32 
+#	This flag is left out for debug builds
+#-mwindows
+#SDL2 flags left out until graphics implementation
+#-lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_ttf
+
+STD = -std=c++14
+
+all: $(OBJS)
+	g++ $(OBJS) $(STD) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
