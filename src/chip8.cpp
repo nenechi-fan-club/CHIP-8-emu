@@ -18,7 +18,7 @@ chip8::chip8() {
 
   pc = ADDR_START;
   
-  pixel_buffer = new uint32_t[WINDOW_WIDTH * WINDOW_HEIGHT];
+  pixel_buffer = new uint32_t[CHIP8_WIDTH * CHIP8_HEIGHT];
 
   keypad = new input();
   keypad->set_binding();
@@ -51,7 +51,11 @@ void chip8::run() {
   
   while (running) {
     update();
+    //int pitch;
+    //uint32_t* pixels = nullptr;
+    //g.lock_texture(pixels, &pitch);
     cpu.cycle(memory, pixel_buffer, keypad);
+    //g.unlock_texture();
     cpu.decrement_timers();
     //printf("Test!\n");
     if(g.update_texture(pixel_buffer) != 0) {

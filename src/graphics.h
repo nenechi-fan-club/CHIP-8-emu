@@ -37,7 +37,7 @@ const int CHIP8_WIDTH = 64;
 const int CHIP8_HEIGHT = 32;
 
 //TODO(keo): move to graphics class
-const int SCALE_FACTOR = 20;
+const int SCALE_FACTOR = 10;
 
 const int WINDOW_WIDTH = CHIP8_WIDTH * SCALE_FACTOR;
 const int WINDOW_HEIGHT = CHIP8_HEIGHT * SCALE_FACTOR;
@@ -61,10 +61,9 @@ public:
   
   //TODO(keo): implement texture rendering using lock/unlock
   //int lock_texture(uint32_t *pixel_buffer, int *pitch);
-  
   //void unlock_texture();
-  void render();
   
+  void render();
 
 private:
   void clean(); //let chip8 clean up?

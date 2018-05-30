@@ -43,6 +43,8 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
   uint8_t y = (opcode[1] & 0xf0) >> 4;
   uint16_t addr = ((opcode[0] & 0x0f) << 8) | opcode[1];
 
+  printf("pc: %03x\n", pc);
+  
   pc += 2;
 
   //Prints program counter, useful for debug
@@ -52,7 +54,7 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
     case 0x00:
       switch(opcode[1]) {
         case 0xe0: //00E0: Clear the display
-          memset(pixel_buffer, 0, WINDOW_WIDTH * WINDOW_HEIGHT * sizeof(uint32_t));
+          memset(pixel_buffer, 0, CHIP8_HEIGHT * CHIP8_WIDTH * sizeof(uint32_t));
         break;
         case 0xee: //00EE: Return from a subroutine
           pc = *sp;
@@ -144,28 +146,32 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
       for (int j = 0; j < 8; j++) {
         int abs_x = reg[x] + j;
         if (abs_x > CHIP8_WIDTH) abs_x = j;
-        abs_x *= SCALE_FACTOR;
+        //abs_x *= SCALE_FACTOR;
         for (int k = 0; k < n; k++) {
           int abs_y = reg[y] + k;
           if (abs_y > CHIP8_HEIGHT) abs_y = k;
-          abs_y *= SCALE_FACTOR;
-          uint32_t *set = &pixel_buffer[abs_x + abs_y*WINDOW_WIDTH];
+          //abs_y *= SCALE_FACTOR;
+          //uint32_t *set = &pixel_buffer[abs_x + abs_y*WINDOW_WIDTH];
+          uint32_t *set = &pixel_buffer[abs_x + abs_y*CHIP8_WIDTH];
           uint32_t pixel = (uint32_t)((sprite[k] & (0x80 >> j)) >> (7-j));
           if (pixel) {
             pixel |= 0xffffff;
             reg[0x0f] = uint8_t(*set);
           }
-          for (int l = 0; l < SCALE_FACTOR; l++) {
-            for (int m = 0; m < SCALE_FACTOR; m++) {
-              *(set + l + m*WINDOW_WIDTH) ^= pixel; 
-            }
-          }
+
+          *set ^= pixel;
+          //for (int l = 0; l < SCALE_FACTOR; l++) {
+          //  for (int m = 0; m < SCALE_FACTOR; m++) {
+          //    *(set + l + m*WINDOW_WIDTH) ^= pixel; 
+          //  }
+          //}
         }
       }
     } break;
     case 0x0e: 
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
+<<<<<<< HEAD
 	  //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
 
 	  
@@ -186,6 +192,29 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
 	    pc += 2;
 	  }	 
 	  break;
+=======
+<<<<<<< HEAD
+        printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
+	      //if (k_pad->is_keydown(reg[x])) {
+	      //  printf("Key '%s' is down\n", reg[x]);
+	      //  pc += 2;
+	      //}
+=======
+        //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
+	  if (k_pad->is_keydown(reg[x])) {
+	        printf("Key '%s' is down\n", reg[x]);
+	        pc += 2;
+	      }
+>>>>>>> b8c6d928efd86aba535342a79165dfe1bd95ba61
+        break;
+        case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
+          printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
+	        //if (k_pad->is_keyup(reg[x])) {
+	        //  printf("Key '%s' is up\n", reg[x]);
+	        //  pc += 2;
+	        //}
+        break;
+>>>>>>> 2d7b000fa28b182db2880326abbf19be1e94cf00
       }
       break;
       
@@ -196,10 +225,8 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
         break;
         case 0x0a: //Fx0A: Wait for a key press, store the value of the key in Vx.
         printf("Warning at %03x: Unimplemented instruction Fx0A\n", pc);
-	      /*
-	        k_pad->is_keydown()
-	        pc -= 2;
-	      */
+	        //k_pad->is_keydown()
+	        //pc -= 2;
         break;
         case 0x15: //Fx15: Set delay timer = Vx
           dt = reg[x];
