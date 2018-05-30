@@ -168,11 +168,19 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
     case 0x0e: 
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
+<<<<<<< HEAD
         printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
 	      //if (k_pad->is_keydown(reg[x])) {
 	      //  printf("Key '%s' is down\n", reg[x]);
 	      //  pc += 2;
 	      //}
+=======
+        //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
+	  if (k_pad->is_keydown(reg[x])) {
+	        printf("Key '%s' is down\n", reg[x]);
+	        pc += 2;
+	      }
+>>>>>>> b8c6d928efd86aba535342a79165dfe1bd95ba61
         break;
         case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
           printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
