@@ -166,15 +166,15 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
         //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
-	      if ( k_pad->is_keydown(x) ) {
-	        printf("Key '%s' is down\n", x);
+	      if (k_pad->is_keydown(reg[x]) {
+	        printf("Key '%s' is down\n", reg[x]);
 	        pc += 2;
 	      }
         break;
         case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
           //printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
-	        if ( k_pad->is_keyup(x) ) {
-	          printf("Key '%s' is up\n", x);
+	        if (k_pad->is_keyup(reg[x])) {
+	          printf("Key '%s' is up\n", reg[x]);
 	          pc += 2;
 	        }
         break;
@@ -187,10 +187,10 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
         break;
         case 0x0a: //Fx0A: Wait for a key press, store the value of the key in Vx.
         printf("Warning at %03x: Unimplemented instruction Fx0A\n", pc);
-	/*
-	  k_pad->is_keydown()
-	  pc -= 2;
-	*/
+	      /*
+	        k_pad->is_keydown()
+	        pc -= 2;
+	      */
         break;
         case 0x15: //Fx15: Set delay timer = Vx
           dt = reg[x];
