@@ -57,7 +57,7 @@ void chip8::run() {
       printf("Failed to update texture: %s\n", SDL_GetError());
     }
     render(); 
-    SDL_Delay(1/60);
+    SDL_Delay(1);
   }
 }
 

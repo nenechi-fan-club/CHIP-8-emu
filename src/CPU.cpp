@@ -154,7 +154,8 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
           uint32_t pixel = (uint32_t)((sprite[k] & (0x80 >> j)) >> (7-j));
           if (pixel) {
             pixel |= 0xffffff;
-            reg[0x0f] = uint8_t(*set);
+            //collision can only happen if both pixels are present
+            reg[0x0f] = uint8_t(*set) & 0x01;
           }
 
           *set ^= pixel;
