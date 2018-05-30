@@ -1,8 +1,9 @@
 #pragma once
 
 #include <SDL.h>
+#include <map>
 
-//const uint8_t KEY_COUNT = 16;
+const uint8_t KEY_COUNT = 16;
 
 /*
   -Virtual key map-
@@ -20,8 +21,11 @@
   zxcv
 */
 
+
+
 enum v_keys {
-  ONE = 0,
+  ZERO = 0,
+  ONE,
   TWO,
   THREE,
   FOUR,
@@ -30,29 +34,33 @@ enum v_keys {
   SEVEN,
   EIGHT,
   NINE,
-  ZERO,
+  
   A,
   B,
   C,
   D,
   E,
-  F,
-  KEY_COUNT  
+  F
 };
 
 class input {
  private:
   bool keys[KEY_COUNT];
-  
+  std::map<uint8_t, SDL_Scancode> bound_keys;
+
  public:
 
   input();
   ~input();
+
+  void bind_default();
+  
+  void frame_reset();
   
   void keydown_event(SDL_Event& e);
-  void keyup_event(SDL_Event& e);
+  //void keyup_event(SDL_Event& e);
 
-  bool is_keydown(v_keys key);
-  bool is_keyup(v_keys key);
+  bool is_keydown(uint8_t key);
+  bool is_keyup(uint8_t key);
   
 };

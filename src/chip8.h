@@ -7,6 +7,7 @@
 
 #include "CPU.h"
 #include "graphics.h"
+#include "input.h"
 
 class chip8 {
 //Constructors
@@ -40,6 +41,7 @@ private:
 private:
   CPU cpu;
   graphics g;
+  input* keypad = nullptr;;
 
   bool running = true;
   

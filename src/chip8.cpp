@@ -19,6 +19,9 @@ chip8::chip8() {
   pc = ADDR_START;
   
   pixel_buffer = new uint32_t[WINDOW_WIDTH * WINDOW_HEIGHT];
+
+  keypad = new input();
+  keypad->bind_default();
 }
 
 chip8::~chip8() {
@@ -27,6 +30,9 @@ chip8::~chip8() {
 
   delete[] pixel_buffer;
 
+  delete keypad;
+  keypad = nullptr;
+  
   clean();
 }
 
@@ -51,9 +57,10 @@ void chip8::run() {
   while (running) {
     update();
     if (!running) break; //temp fix until run logic is fixed
-    running = cpu.cycle(memory, pixel_buffer);
+    running = cpu.cycle(memory, pixel_buffer, keypad );
+    //printf("Test!\n");
     if(g.update_texture(pixel_buffer) != 0) {
-      printf("Failed to update texture: %s", SDL_GetError());
+      printf("Failed to update texture: %s\n", SDL_GetError());
     }
     render();  
     SDL_Delay(1/60);
@@ -167,6 +174,8 @@ bool chip8::init() {
 
 void chip8::update() {
 
+  keypad->frame_reset();
+  
   SDL_Event e;
 
   while( SDL_PollEvent(&e) != 0 ) {
@@ -177,8 +186,8 @@ void chip8::update() {
       break;
       
     case SDL_KEYDOWN:
-      printf("test works!\n");
-      
+      //printf("test works!\n");
+      keypad->keydown_event(e);
       break;
 
     case SDL_KEYUP:

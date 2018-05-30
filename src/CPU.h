@@ -7,6 +7,7 @@
 #endif
 
 #include "graphics.h"
+#include "input.h"
 
 const uint16_t ADDR_START = 0x200;
 const uint16_t ADDR_END   = 0xfff;
@@ -22,7 +23,7 @@ public:
 
 //Methods
 public:
-  bool cycle(uint8_t* memory, uint32_t *pixel_buffer);
+  bool cycle(uint8_t* memory, uint32_t *pixel_buffer, input* k_pad);
   //void start_cpu();
 
 //Members
