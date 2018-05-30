@@ -141,31 +141,23 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
     } break;
     case 0x0d: { //Dxyn: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
       uint8_t *sprite = (memory + i);
+      bool collision = false;
       for (int j = 0; j < 8; j++) {
         int abs_x = reg[x] + j;
         if (abs_x > CHIP8_WIDTH) abs_x = j;
-        //abs_x *= SCALE_FACTOR;
         for (int k = 0; k < n; k++) {
           int abs_y = reg[y] + k;
           if (abs_y > CHIP8_HEIGHT) abs_y = k;
-          //abs_y *= SCALE_FACTOR;
-          //uint32_t *set = &pixel_buffer[abs_x + abs_y*WINDOW_WIDTH];
-          uint32_t *set = &pixel_buffer[abs_x + abs_y*CHIP8_WIDTH];
+          uint32_t *target = &pixel_buffer[abs_x + abs_y*CHIP8_WIDTH];
           uint32_t pixel = (uint32_t)((sprite[k] & (0x80 >> j)) >> (7-j));
           if (pixel) {
             pixel |= 0xffffff;
-            //collision can only happen if both pixels are present
-            reg[0x0f] = uint8_t(*set) & 0x01;
+            collision |= (uint8_t)(*target) & 0x01;
           }
-
-          *set ^= pixel;
-          //for (int l = 0; l < SCALE_FACTOR; l++) {
-          //  for (int m = 0; m < SCALE_FACTOR; m++) {
-          //    *(set + l + m*WINDOW_WIDTH) ^= pixel; 
-          //  }
-          //}
+          *target ^= pixel;
         }
       }
+      reg[0x0f] = collision;
     } break;
     case 0x0e: 
       switch(opcode[1]) {
