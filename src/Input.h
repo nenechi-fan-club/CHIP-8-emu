@@ -46,19 +46,27 @@ enum v_keys {
 class input {
  private:
   bool keys[KEY_COUNT];
+
   std::map<uint8_t, SDL_Scancode> bound_keys;
 
+
+ private:
+  std::map<uint8_t, SDL_Scancode> bind_default();
+  
+  
  public:
 
   input();
   ~input();
 
-  void bind_default();
+  void log_inputs();
+  
+  void set_binding();
   
   void frame_reset();
   
   void keydown_event(SDL_Event& e);
-  //void keyup_event(SDL_Event& e);
+  void keyup_event(SDL_Event& e);
 
   bool is_keydown(uint8_t key);
   bool is_keyup(uint8_t key);

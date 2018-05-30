@@ -21,7 +21,7 @@ chip8::chip8() {
   pixel_buffer = new uint32_t[WINDOW_WIDTH * WINDOW_HEIGHT];
 
   keypad = new input();
-  keypad->bind_default();
+  keypad->set_binding();
 }
 
 chip8::~chip8() {
@@ -45,11 +45,6 @@ bool chip8::load_rom(std::string rom) {
   ifs.read(reinterpret_cast<char *>(memory + ADDR_START), len);
   return true;
 }
-
-//TODO(Sweets): Delet this!
-//void chip8::cpu_cycle() {
-//  cpu.cycle(memory);
-//}
 
 void chip8::run() {
   if (!init()) running = false;
@@ -191,13 +186,15 @@ void chip8::update() {
       break;
 
     case SDL_KEYUP:
-      
+      keypad->keyup_event(e);
       break;
         
     }
-
+    
   }
   //cpu.cycle(memory);
+
+  keypad->log_inputs();
 }
 
 void chip8::render() {
