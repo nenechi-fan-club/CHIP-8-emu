@@ -32,9 +32,9 @@ CPU::~CPU() {
 
 
 //TODO: Ex9E, ExA1, Fx0A
-bool CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
-  //if (pc == EOF) return false;
-  if (pc >= ADDR_END) return false;
+void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
+  //if (pc >= EOF) return;
+  if (pc >= ADDR_END) return;
 
   uint8_t* opcode = &memory[pc];
   uint8_t first = opcode[0] >> 4;
@@ -165,18 +165,18 @@ bool CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
     case 0x0e: 
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
-        printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
-	if ( k_pad->is_keydown(x) ) {
-	   printf("Key '%s' is down\n", x);
-	 pc += 2;
-	}
+        //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
+	      if ( k_pad->is_keydown(x) ) {
+	        printf("Key '%s' is down\n", x);
+	        pc += 2;
+	      }
         break;
         case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
-        printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
-	if ( k_pad->is_keyup(x) ) {
-	  printf("Key '%s' is up\n", x);
-	  pc += 2;
-	}
+          //printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
+	        if ( k_pad->is_keyup(x) ) {
+	          printf("Key '%s' is up\n", x);
+	          pc += 2;
+	        }
         break;
       }
     break;
@@ -224,6 +224,9 @@ bool CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, input* k_pad ) {
       }
     break;
   }
+}
 
-  return true;
+void CPU::decrement_timers() {
+  if (dt != 0) dt--;
+  if (st != 0) st--;
 }

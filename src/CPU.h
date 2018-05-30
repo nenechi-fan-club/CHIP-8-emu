@@ -23,8 +23,11 @@ public:
 
 //Methods
 public:
-  bool cycle(uint8_t* memory, uint32_t *pixel_buffer, input* k_pad);
+  void cycle(uint8_t* memory, uint32_t *pixel_buffer, input* k_pad);
   //void start_cpu();
+
+  //should be in its own function and not cycle because it should run on different frequency
+  void decrement_timers();
 
 //Members
 private:

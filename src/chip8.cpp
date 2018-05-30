@@ -56,13 +56,13 @@ void chip8::run() {
   
   while (running) {
     update();
-    if (!running) break; //temp fix until run logic is fixed
-    running = cpu.cycle(memory, pixel_buffer, keypad );
+    cpu.cycle(memory, pixel_buffer, keypad);
+    cpu.decrement_timers();
     //printf("Test!\n");
     if(g.update_texture(pixel_buffer) != 0) {
       printf("Failed to update texture: %s\n", SDL_GetError());
     }
-    render();  
+    render(); 
     SDL_Delay(1/60);
   }
 }
