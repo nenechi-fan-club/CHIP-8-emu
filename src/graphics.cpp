@@ -33,19 +33,24 @@ bool graphics::init() {
     return false;
   }
 
+  /*
+    Set the render area to the area of the window
+    SDL_Rect{ x, y, w, h };
+  */
+  render_area = new SDL_Rect{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+  
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, 0);
 
   return true;
 }
 
-int graphics::update_texture(uint32_t *pixel_buffer) {
+int graphics::update_texture(uint32_t* pixel_buffer) {
   return SDL_UpdateTexture(texture, nullptr, pixel_buffer, CHIP8_WIDTH * sizeof(uint32_t));
 }
 
 void graphics::render() {
   SDL_RenderClear(renderer);
-  SDL_Rect rect = {.x = 0, .y = 0, .w = WINDOW_WIDTH, .h = WINDOW_HEIGHT};
-  SDL_RenderCopy(renderer, texture, nullptr, &rect);
+  SDL_RenderCopy(renderer, texture, nullptr, render_area);
   SDL_RenderPresent(renderer);
 }
 
@@ -61,7 +66,10 @@ void graphics::clean() {
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyTexture(texture);
-  window = nullptr;
-  renderer = nullptr;
-  texture = nullptr;
+  delete render_area;
+ 
+  window      = nullptr;
+  renderer    = nullptr;
+  texture     = nullptr;
+  render_area = nullptr;
 }

@@ -71,7 +71,11 @@ private:
 
 //members
 private:
-  SDL_Window* window;
-  SDL_Renderer* renderer;
-  SDL_Texture* texture;
+  //SDL pointers must be set to null otherwise can cause errors
+  SDL_Window*   window   = nullptr;
+  SDL_Renderer* renderer = nullptr;
+  SDL_Texture*  texture  = nullptr;
+
+  SDL_Rect* render_area = nullptr;
+  
 };
