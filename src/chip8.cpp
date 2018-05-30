@@ -16,12 +16,9 @@ chip8::chip8() {
     }
   }
 
-  pc = ADDR_START;
-  
   pixel_buffer = new uint32_t[CHIP8_WIDTH * CHIP8_HEIGHT];
 
-  keypad = new input();
-  keypad->bind_default();
+  //keypad.bind_default();
 }
 
 chip8::~chip8() {
@@ -29,9 +26,7 @@ chip8::~chip8() {
   memory = nullptr;
 
   delete[] pixel_buffer;
-
-  delete keypad;
-  keypad = nullptr;
+  pixel_buffer = nullptr;
   
   clean();
 }
@@ -71,13 +66,13 @@ void chip8::run() {
   }
 }
 
-void chip8::debug(uint16_t offset) {
+void chip8::debug(uint16_t offset) const {
   dump_memory(offset);
   printf("\n==================\n\n");
   run_disassembler();
 }
 
-void chip8::dump_memory(uint16_t offset) {
+void chip8::dump_memory(uint16_t offset) const {
   uint16_t end = std::min<int16_t>(ADDR_END, ADDR_START + len);
   for (uint16_t j = offset; j < end; j += 0x10) {
     printf("%03x  ", j);
@@ -93,7 +88,7 @@ void chip8::dump_memory(uint16_t offset) {
 //x - A 4-bit value, the lower 4 bits of the high byte of the instruction
 //y - A 4-bit value, the upper 4 bits of the low byte of the instruction
 //kk - An 8-bit value, the lowest 8 bits of the instructiona
-void chip8::disassemble() {
+void chip8::disassemble(uint16_t pc) const {
   uint8_t* opcode = &memory[pc];
   uint8_t first = opcode[0] >> 4;
   uint8_t n = opcode[1] & 0x0f;
@@ -158,15 +153,14 @@ void chip8::disassemble() {
   }
 }
 
-void chip8::run_disassembler() {
-  pc = ADDR_START;
+void chip8::run_disassembler() const {
+  uint16_t pc = ADDR_START;
   while (pc < ADDR_START + len) {
-    disassemble();
+    disassemble(pc);
     pc += 2;
     printf("\n");
   }
 }
-
 
 bool chip8::init() {
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -177,29 +171,20 @@ bool chip8::init() {
 }
 
 void chip8::update() {
-
-  keypad->frame_reset();
-  
   SDL_Event e;
 
-  while( SDL_PollEvent(&e) != 0 ) {
+  while(SDL_PollEvent(&e) != 0) {
     switch(e.type) {
-
-    case SDL_QUIT:
-      running = false;
+      case SDL_QUIT:
+        running = false;
       break;
-      
-    case SDL_KEYDOWN:
-      //printf("test works!\n");
-      keypad->keydown_event(e);
+      case SDL_KEYDOWN:
+        keypad.keydown_event(e);
       break;
-
-    case SDL_KEYUP:
-      
+      case SDL_KEYUP:
+        keypad.keyup_event(e);
       break;
-        
     }
-
   }
   //cpu.cycle(memory);
 }

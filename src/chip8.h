@@ -23,13 +23,13 @@ public:
 
   void run();
   
-  void debug(uint16_t offset = ADDR_START);
+  void debug(uint16_t offset = ADDR_START) const;
 
 private:
   //Debug
-  void dump_memory(uint16_t offset);
-  void disassemble();
-  void run_disassembler();
+  void dump_memory(uint16_t offset) const;
+  void disassemble(uint16_t pc) const;
+  void run_disassembler() const;
 
   //SDL
   bool init();
@@ -41,13 +41,12 @@ private:
 private:
   CPU cpu;
   graphics g;
-  input* keypad = nullptr;;
+  input keypad;
 
   bool running = true;
   
   uint8_t* memory;
-  uint16_t pc;
-  uint16_t len;
+  uint16_t len; //Length of address space ocupied by ROM
   
   //GPU memory buffer
   uint32_t *pixel_buffer;

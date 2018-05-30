@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 #ifndef __GNUG__
@@ -23,23 +24,19 @@ public:
 
 //Methods
 public:
-  void cycle(uint8_t* memory, uint32_t *pixel_buffer, input* k_pad);
-  //void start_cpu();
+  void cycle(uint8_t* memory, uint32_t *pixel_buffer, const input &keypad);
 
   //should be in its own function and not cycle because it should run on different frequency
   void decrement_timers();
 
 //Members
 private:
-  uint16_t* sp;                 //Stack pointer
   uint16_t pc;                 //Program counter
-  uint16_t stack[STACK_SIZE]; 
+  uint16_t* sp;                 //Stack pointer
+  std::array<uint16_t, STACK_SIZE> stack;
   
-  uint16_t len;
-
   //Registers, reg[] are 8 bit registers, i is a special 16 register
-  uint8_t reg[REG_SIZE];
-  
+  std::array<uint8_t, REG_SIZE> reg;
   uint16_t i;
   
   uint8_t dt;

@@ -66,7 +66,8 @@ public:
   void render();
 
 private:
-  void clean(); //let chip8 clean up?
+  //(Keo): let chip8 clean up?
+  void clean();
 
 //members
 private:

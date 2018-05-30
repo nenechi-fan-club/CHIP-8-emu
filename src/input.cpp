@@ -1,83 +1,78 @@
 #include "input.h"
 
 input::input() {
-
+  for (auto &i : key_status) {
+    i = false;
+  }
+  bind_default();
 }
 
-input::~input() {
+input::~input() {}
 
-}
-
-
-void input::frame_reset() {
+/*void input::frame_reset() {
   for (int i = 0; i < KEY_COUNT; i++) {
     keys[i] = false;
   }
+}*/
+
+void input::keydown_event(const SDL_Event& e) {
+  set_key_status(e.key.keysym.scancode, true);
 }
 
-void input::keydown_event(SDL_Event& e) {
-  for (auto bk : bound_keys) {
-    if ( e.key.keysym.scancode == bk.second ) {
-      keys[bk.first] = true;
-      printf("INPUT EVENT ADDED; %d, %d, %d \n", bk.first, bk.second, keys[bk.first]);
+void input::keyup_event(const SDL_Event& e) {
+  set_key_status(e.key.keysym.scancode, false);
+}
+
+void input::set_key_status(SDL_Scancode scancode, bool status) {
+  for (const auto &key : keys) {
+    if (key.second == scancode) {
+      key_status[key.first] = status;
+      printf("INPUT EVENT ADDED; %d, %d, %d \n", key.first, key.second, key_status[key.first]);
     }
   }
 }
 
-//void input::keyup_event(SDL_Event& e) {}
-
-bool input::is_keydown(uint8_t key) {
-  if ( key > 16) {
+bool input::is_keydown(uint8_t key) const {
+  if (key > 15) {
     printf("Error! Key > 16\n");
     return false;
   }
   else {
     printf("%d\n", key);
-    return keys[key];
+    return key_status[key];
   }
+  //return (key > 15) ? false : key_status[key];
 }
 
-bool input::is_keyup(uint8_t key) {
-  if (key > 16) {
-    printf("Error! Key > 16\n");
-    return false;
+bool input::is_keydown() const {
+  for (const auto& key : keys) {
+    if (key_status[key.first]) return true;
   }
-  else {
-    if (keys[key])
-      return false;
-
-    return true;
-  }
+  return false;
 }
 
-
-
-
-/*
-if( input.is_keydown(v_keys::ONE) ) {
-  //do thing
+bool input::is_keyup(uint8_t key) const {
+  return !is_keydown(key);
 }
-
-*/
 
 void input::bind_default() {
-  bound_keys[v_keys::ONE]   = SDL_SCANCODE_1;
-  bound_keys[v_keys::TWO]   = SDL_SCANCODE_2;
-  bound_keys[v_keys::THREE] = SDL_SCANCODE_3;
-  bound_keys[v_keys::C]     = SDL_SCANCODE_4;
+  keys[v_keys::ONE]   = SDL_SCANCODE_1;
+  keys[v_keys::TWO]   = SDL_SCANCODE_2;
+  keys[v_keys::THREE] = SDL_SCANCODE_3;
+  keys[v_keys::C]     = SDL_SCANCODE_4;
   
-  bound_keys[v_keys::FOUR]  = SDL_SCANCODE_Q;
-  bound_keys[v_keys::FIVE]  = SDL_SCANCODE_W;
-  bound_keys[v_keys::SIX]   = SDL_SCANCODE_E;
-  bound_keys[v_keys::D]     = SDL_SCANCODE_R;
+  keys[v_keys::FOUR]  = SDL_SCANCODE_Q;
+  keys[v_keys::FIVE]  = SDL_SCANCODE_W;
+  keys[v_keys::SIX]   = SDL_SCANCODE_E;
+  keys[v_keys::D]     = SDL_SCANCODE_R;
   
-  bound_keys[v_keys::SEVEN] = SDL_SCANCODE_A;
-  bound_keys[v_keys::EIGHT] = SDL_SCANCODE_S;
-  bound_keys[v_keys::NINE]  = SDL_SCANCODE_D;
-  bound_keys[v_keys::E]     = SDL_SCANCODE_F;
+  keys[v_keys::SEVEN] = SDL_SCANCODE_A;
+  keys[v_keys::EIGHT] = SDL_SCANCODE_S;
+  keys[v_keys::NINE]  = SDL_SCANCODE_D;
+  keys[v_keys::E]     = SDL_SCANCODE_F;
   
-  bound_keys[v_keys::A]     = SDL_SCANCODE_Z;
-  bound_keys[v_keys::ZERO]  = SDL_SCANCODE_X;
-  bound_keys[v_keys::B]     = SDL_SCANCODE_C;
-  bound_keys[v_keys::F]     = SDL_SCANCODE_V;
+  keys[v_keys::A]     = SDL_SCANCODE_Z;
+  keys[v_keys::ZERO]  = SDL_SCANCODE_X;
+  keys[v_keys::B]     = SDL_SCANCODE_C;
+  keys[v_keys::F]     = SDL_SCANCODE_V;
 }
