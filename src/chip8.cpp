@@ -18,12 +18,7 @@ chip8::chip8() {
 
   pixel_buffer = new uint32_t[CHIP8_WIDTH * CHIP8_HEIGHT];
 
-<<<<<<< HEAD
   //keypad.bind_default();
-=======
-  keypad = new input();
-  keypad->set_binding();
->>>>>>> 8642ada80380561021c12411a9d5d44c7f2c47da
 }
 
 chip8::~chip8() {
@@ -181,24 +176,12 @@ void chip8::update() {
       case SDL_KEYDOWN:
         keypad.keydown_event(e);
       break;
-<<<<<<< HEAD
       case SDL_KEYUP:
         keypad.keyup_event(e);
-=======
-
-    case SDL_KEYUP:
-      keypad->keyup_event(e);
->>>>>>> 8642ada80380561021c12411a9d5d44c7f2c47da
       break;
     }
-<<<<<<< HEAD
-=======
-    
->>>>>>> 8642ada80380561021c12411a9d5d44c7f2c47da
   }
   //cpu.cycle(memory);
-
-  keypad->log_inputs();
 }
 
 void chip8::render() {

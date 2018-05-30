@@ -46,11 +46,7 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
   uint16_t addr = ((opcode[0] & 0x0f) << 8) | opcode[1];
 
   //printf("pc: %03x\n", pc);
-  
   pc += 2;
-
-  //Prints program counter, useful for debug
-  //printf("pc: %d\n", pc);
   
   switch(first) {
     case 0x00:
@@ -173,38 +169,6 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
     case 0x0e: 
       switch(opcode[1]) {
         case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-	  //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
-
-	  
-	  printf("$d\n", reg[x]);
-	  if ( k_pad->is_keydown(reg[x]) ) {
-	    printf("Key '%s' is down\n", reg[x]);
-	    pc += 2;
-	  }
-
-	  
-        break;
-        case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
-	  //printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
-
-	  //printf("%d\n", reg[x]);
-	  if (k_pad->is_keyup(reg[x])) {
-	    //printf("Key '%d' is up\n", reg[x]);
-	    pc += 2;
-	  }	 
-	  break;
-=======
-<<<<<<< HEAD
-        printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
-	      //if (k_pad->is_keydown(reg[x])) {
-	      //  printf("Key '%s' is down\n", reg[x]);
-	      //  pc += 2;
-	      //}
-=======
->>>>>>> 8642ada80380561021c12411a9d5d44c7f2c47da
         //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
 	      if (keypad.is_keydown(reg[x])) {
 	        printf("Key '%01x' is down\n", reg[x]);
@@ -213,15 +177,13 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
         break;
         case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
           //printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
-	        if (!keypad.is_keydown(reg[x])) {
+	        if (keypad.is_keyup(reg[x])) {
 	          printf("Key '%01x' is up\n", reg[x]);
 	          pc += 2;
-	        }
+	        } 
         break;
->>>>>>> 2d7b000fa28b182db2880326abbf19be1e94cf00
-      }
-      break;
-      
+      } 
+    break;
     case 0x0f:
       switch(opcode[1]) {
         case 0x07: //Fx07: Set Vx = delay timer value
