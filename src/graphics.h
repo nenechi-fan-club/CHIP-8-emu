@@ -33,8 +33,8 @@ const uint8_t FONT_SPRITES[FONT_COUNT][SPRITE_SIZE] = {
 //offset must satisfy: offset + 80 < 512
 const uint16_t FONT_OFFSET = 0;
 
-const int CHIP8_WIDTH = 64;
-const int CHIP8_HEIGHT = 32;
+const uint8_t CHIP8_WIDTH = 64;
+const uint8_t CHIP8_HEIGHT = 32;
 
 //TODO(keo): move to graphics class
 const int SCALE_FACTOR = 10;
@@ -53,7 +53,7 @@ public:
   bool init(); 
   
   //wraper for SDL_UpdateTexture
-  int update_texture(uint32_t *pixel_buffer);
+  int update_texture(uint32_t* pixel_buffer);
   /*
     (Sweets): The reason GPU usage is so high, is because SDL_UpdateTexture is an extremely slow function.
               The fix for GPU usage would be to implement this with SDL_LockTexture.
@@ -76,6 +76,8 @@ private:
   SDL_Renderer* renderer = nullptr;
   SDL_Texture*  texture  = nullptr;
 
-  SDL_Rect* render_area = nullptr;
+  SDL_Rect* render_area  = nullptr;
+
+  void* texture_buffer   = nullptr;
   
 };

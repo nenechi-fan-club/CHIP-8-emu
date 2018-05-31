@@ -49,5 +49,5 @@ private:
   uint16_t len; //Length of address space ocupied by ROM
   
   //GPU memory buffer
-  uint32_t *pixel_buffer;
+  uint32_t* pixel_buffer;
 };
