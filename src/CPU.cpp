@@ -159,25 +159,22 @@ void CPU::cycle(uint8_t* memory, uint32_t* pixel_buffer, const input &keypad ) {
       }
       reg[0x0f] = collision;
     } break;
-    case 0x0e: 
-      switch(opcode[1]) {
-        case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
-        //printf("Warning at %03x: Unimplemented instruction Ex9E\n", pc);
-	      if (keypad.is_keydown(reg[x])) {
-	        printf("Key '%01x' is down\n", reg[x]);
-	        pc += 2;
-	      }
-        break;
-        case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
-          //printf("Warning at %03x: Unimplemented instruction ExA1\n", pc);
-	        if (keypad.is_keyup(reg[x])) {
-	          printf("Key '%01x' is up\n", reg[x]);
-	          pc += 2;
-	        } 
-        break;
+  case 0x0e: 
+    switch(opcode[1]) {
+    case 0x9e: //Ex9E: Skip next instruction if key with the value of Vx is pressed
+      if (keypad.is_keydown(reg[x])) {  
+	pc += 2;
+      }
+      break;
+    case 0xa1: //ExA1: Skip next instruction if key with the value of Vx is not pressed
+      if (keypad.is_keyup(reg[x])) {
+	pc += 2;
       } 
+      break;
+    } 
     break;
-    case 0x0f:
+
+  case 0x0f:
       switch(opcode[1]) {
         case 0x07: //Fx07: Set Vx = delay timer value
           reg[x] = dt;

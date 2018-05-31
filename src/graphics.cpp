@@ -26,7 +26,7 @@ bool graphics::init() {
 
   texture = SDL_CreateTexture(renderer, 
     SDL_PIXELFORMAT_ARGB8888, 
-    SDL_TEXTUREACCESS_STATIC, 
+    SDL_TEXTUREACCESS_STREAMING, 
     CHIP8_WIDTH, CHIP8_HEIGHT);
   if (texture == nullptr) {
     printf("Failed to create texture: %s", SDL_GetError());
@@ -45,7 +45,28 @@ bool graphics::init() {
 }
 
 int graphics::update_texture(uint32_t* pixel_buffer) {
-  return SDL_UpdateTexture(texture, nullptr, pixel_buffer, CHIP8_WIDTH * sizeof(uint32_t));
+  //Lock texture sets &texture_buffer to the address of the texture's data as a linear array
+  int pitch; 
+  
+  if ( SDL_LockTexture(texture, NULL, &texture_buffer, &pitch ) == -1 ) {
+    printf( "Error locking texture; SDL_Error: %s\n", SDL_GetError() );
+    return -1;
+  }
+  else {
+    // Get data of texture from void* as Uint32 array
+    uint32_t* t_buffer = (uint32_t*)texture_buffer;
+    if (!t_buffer)
+      return 1;
+
+    for (int i = 0; i < (CHIP8_WIDTH * CHIP8_HEIGHT); i++) {
+      t_buffer[i] = pixel_buffer[i];
+    }
+ 
+    SDL_UnlockTexture(texture);
+    t_buffer = nullptr;
+    
+    return 0;
+  } 
 }
 
 void graphics::render() {

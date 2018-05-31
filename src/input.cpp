@@ -27,7 +27,8 @@ void input::set_key_status(SDL_Scancode scancode, bool status) {
   for (const auto &key : keys) {
     if (key.second == scancode) {
       key_status[key.first] = status;
-      printf("INPUT EVENT ADDED; %d, %d, %d \n", key.first, key.second, key_status[key.first]);
+      if (log_inputs)
+	printf("INPUT EVENT ADDED; %d, %d, %d \n", key.first, key.second, key_status[key.first]);
     }
   }
 }
@@ -38,7 +39,8 @@ bool input::is_keydown(uint8_t key) const {
     return false;
   }
   else {
-    printf("%d\n", key);
+    if (log_inputs)
+      printf("%d\n", key);
     return key_status[key];
   }
   //return (key > 15) ? false : key_status[key];
@@ -53,6 +55,10 @@ bool input::is_keydown() const {
 
 bool input::is_keyup(uint8_t key) const {
   return !is_keydown(key);
+}
+
+void input::logging(bool option) {
+  log_inputs = option;
 }
 
 void input::bind_default() {
