@@ -24,3 +24,22 @@ Then you can invoke chip8 like so, <br />
 *"chip8 ../[path to ROM]"* <br />
 
 "../" Will take you up a directory, and from there the path to the ROM can be specified. 
+
+## How to play
+
+CHIP-8 has a hexidecimal keypad, meaning it as 16 keys that look like so; </br>
+
+1 2 3 C </br>
+4 5 6 D </br>
+7 8 9 E </br>
+A 0 B F </br>
+
+For now, these keys have been mapped to this; </br>
+
+1 2 3 4 </br>
+Q W E R </br> 
+A S D F </br>
+Z X C V </br>
+
+In the future, we may add rebindable keys, however I for the life of me could not find a more sensible place to bind these.</br>
+
