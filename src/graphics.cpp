@@ -75,13 +75,14 @@ void graphics::render() {
   SDL_RenderPresent(renderer);
 }
 
-//int graphics::lock_texture(uint32_t *pixel_buffer, int *pitch) {
-//  return SDL_LockTexture(texture, nullptr, reinterpret_cast<void **>(&pixel_buffer), pitch);
-//}
+int graphics::lock_texture(uint32_t *&pixel_buffer, int *pitch) {
+  return SDL_LockTexture(texture, nullptr, reinterpret_cast<void **>(&pixel_buffer), pitch);
+}
 
-//void graphics::unlock_texture() {
-//  SDL_UnlockTexture(texture);
-//}
+void graphics::unlock_texture(uint32_t *&pixel_buffer) {
+  SDL_UnlockTexture(texture);
+  pixel_buffer = nullptr;
+}
 
 void graphics::clean() {
   SDL_DestroyWindow(window);

@@ -46,16 +46,22 @@ void chip8::run() {
   
   while (running) {
     update();
-    //int pitch;
-    //uint32_t* pixels = nullptr;
-    //g.lock_texture(pixels, &pitch);
-    cpu.cycle(memory, pixel_buffer, keypad);
-    //g.unlock_texture();
-    cpu.decrement_timers();
-    //printf("Test!\n");
-    if(g.update_texture(pixel_buffer) != 0) {
-      printf("Failed to update texture: %s\n", SDL_GetError());
+    
+    int pitch;
+    uint32_t* pixel_buffer = nullptr;
+    if (g.lock_texture(pixel_buffer, &pitch)) {
+      printf("Faile to lock texture: %s\n", SDL_GetError());
+    
     }
+    cpu.cycle(memory, pixel_buffer, keypad);
+    cpu.decrement_timers();
+    
+    g.unlock_texture(pixel_buffer);
+
+    //printf("Test!\n");
+    /*if(g.update_texture(pixel_buffer) != 0) {
+      printf("Failed to update texture: %s\n", SDL_GetError());
+    }*/
     render(); 
     SDL_Delay(1);
   }

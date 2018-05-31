@@ -60,8 +60,8 @@ public:
    */
   
   //TODO(keo): implement texture rendering using lock/unlock
-  //int lock_texture(uint32_t *pixel_buffer, int *pitch);
-  //void unlock_texture();
+  int lock_texture(uint32_t *&pixel_buffer, int *pitch);
+  void unlock_texture(uint32_t *&pixel_buffer);
   
   void render();
 
